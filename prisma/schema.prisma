@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Each record represents a single drinking event
+model WaterIntake {
+  id         Int      @id @default(autoincrement())
+  volumeMl   Int      // how much was drunk at once, in milliliters
+  takenAt    DateTime @default(now()) // when this happened
+  note       String?  // optional description (e.g., "after workout")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Index by time to make daily/monthly stats fast
+  @@index([takenAt])
+}
