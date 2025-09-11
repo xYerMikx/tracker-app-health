@@ -7,7 +7,9 @@ import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Textarea } from "@/shared/ui/textarea";
 import { TimePicker } from "@/shared/ui/time-picker";
-import { formatDateTimeFromIso } from "@/shared/utils/date";
+import { formatDateTimeFromIso, isTodayLocal } from "@/shared/utils/date";
+import { Edit3, Trash2, Save, X } from "lucide-react";
+import { ConfirmPopover } from "@/shared/ui/confirm-popover";
 
 export type WaterIntake = {
   id: number;
@@ -15,16 +17,6 @@ export type WaterIntake = {
   takenAt: string; 
   note?: string | null;
 };
-
-function isTodayLocal(iso: string) {
-  const d = new Date(iso);
-  const n = new Date();
-  return (
-    d.getFullYear() === n.getFullYear() &&
-    d.getMonth() === n.getMonth() &&
-    d.getDate() === n.getDate()
-  );
-}
 
 export function WaterIntakeItem({ entry }: { entry: WaterIntake }) {
   const canEdit = isTodayLocal(entry.takenAt);
@@ -100,17 +92,26 @@ export function WaterIntakeItem({ entry }: { entry: WaterIntake }) {
             onClick={() => setEditing(true)}
             title={canEdit ? "Редактировать" : "Редактирование доступно только сегодня"}
           >
+            <Edit3 className="size-4" />
             Редактировать
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
+          <ConfirmPopover
+            title="Удалить запись?"
+            description="Действие необратимо."
+            confirmText="Удалить"
+            onConfirm={() => deleteMutation.mutate()}
             disabled={!canEdit || deleteMutation.isPending}
-            onClick={() => deleteMutation.mutate()}
-            title={canEdit ? "Удалить" : "Удаление доступно только сегодня"}
           >
-            Удалить
-          </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={!canEdit || deleteMutation.isPending}
+              title={canEdit ? "Удалить" : "Удаление доступно только сегодня"}
+            >
+              <Trash2 className="size-4" />
+              Удалить
+            </Button>
+          </ConfirmPopover>
         </div>
       </li>
     );
@@ -148,8 +149,12 @@ export function WaterIntakeItem({ entry }: { entry: WaterIntake }) {
         </div>
       </div>
       <div className="mt-3 flex gap-2 justify-end">
-        <Button variant="ghost" onClick={() => setEditing(false)}>Отмена</Button>
+        <Button variant="ghost" onClick={() => setEditing(false)}>
+          <X className="size-4" />
+          Отмена
+        </Button>
         <Button onClick={() => updateMutation.mutate()} disabled={updateMutation.isPending}>
+          <Save className="size-4" />
           Сохранить
         </Button>
       </div>

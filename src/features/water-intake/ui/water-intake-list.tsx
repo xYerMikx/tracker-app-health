@@ -4,6 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Progress } from "@/shared/ui/progress";
 import { WaterIntakeItem } from "./water-intake-item";
+import { DAILY_GOAL_ML } from "@/shared/config/health";
+import { Badge } from "@/shared/ui/badge";
+import { isTodayLocal } from "@/shared/utils/date";
 
 type WaterIntake = {
   id: number;
@@ -11,20 +14,6 @@ type WaterIntake = {
   takenAt: string; 
   note?: string | null;
 };
-
-// TODO: store in db
-const DAILY_GOAL_ML = 3000;
-
-
-function isTodayLocal(iso: string) {
-  const d = new Date(iso);
-  const n = new Date();
-  return (
-    d.getFullYear() === n.getFullYear() &&
-    d.getMonth() === n.getMonth() &&
-    d.getDate() === n.getDate()
-  );
-}
 
 export function WaterIntakeList() {
   const { data, isLoading, isError } = useQuery<WaterIntake[]>({
@@ -49,10 +38,17 @@ export function WaterIntakeList() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Сегодня</CardTitle>
-        <CardDescription>
-          {todayTotal} мл / {DAILY_GOAL_ML} мл
-        </CardDescription>
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <CardTitle>Сегодня</CardTitle>
+            <CardDescription>
+              {todayTotal} мл / {DAILY_GOAL_ML} мл
+            </CardDescription>
+          </div>
+          <Badge>
+            Прогресс: {progress}%
+          </Badge>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="mb-4">

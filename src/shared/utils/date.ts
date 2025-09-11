@@ -6,4 +6,13 @@ export const formatDateTimeFromIso = (iso: string) => {
   
   return `${date}T${time}`;
 };
-  
+
+export const isTodayLocal = (iso: string) => {
+  const d = new Date(iso);
+  const n = new Date();
+  return (
+    d.getFullYear() === n.getFullYear() &&
+    d.getMonth() === n.getMonth() &&
+    d.getDate() === n.getDate()
+  );
+};

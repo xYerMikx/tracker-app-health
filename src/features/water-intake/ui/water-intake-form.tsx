@@ -12,8 +12,6 @@ import { Label } from "@/shared/ui/label";
 import { TimePicker } from "@/shared/ui/time-picker";
 import { formatDateTimeFromIso } from "@/shared/utils/date";
 
-
-
 export const WaterIntakeForm = () => {
   const queryClient = useQueryClient();
   const [message, setMessage] = useState<string | null>(null);
