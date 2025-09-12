@@ -56,13 +56,12 @@ export const WaterIntakeForm = () => {
 
       const takenAtCurrent = formatDateTimeFromIso(new Date().toISOString());
 
-      
       queryClient.invalidateQueries({ queryKey: ["water-intakes"] });
-      
+
       reset({ volumeMl: 250, takenAt: takenAtCurrent, note: "" });
       setTimeout(() => setMessage(null), 2500);
     },
-    onError: (err: any) => {
+    onError: (err) => {
       setMessage(err?.message ?? "Ошибка сохранения");
 
       setTimeout(() => setMessage(null), 3000);
@@ -86,7 +85,9 @@ export const WaterIntakeForm = () => {
           {...register("volumeMl", { valueAsNumber: true })}
         />
         {errors.volumeMl && (
-          <p className="text-xs text-red-500 mt-1">{String(errors.volumeMl.message)}</p>
+          <p className="text-xs text-red-500 mt-1">
+            {String(errors.volumeMl.message)}
+          </p>
         )}
       </div>
 
@@ -100,7 +101,9 @@ export const WaterIntakeForm = () => {
           )}
         />
         {errors.takenAt && (
-          <p className="text-xs text-red-500 mt-1">{String(errors.takenAt.message)}</p>
+          <p className="text-xs text-red-500 mt-1">
+            {String(errors.takenAt.message)}
+          </p>
         )}
       </div>
 
@@ -116,7 +119,9 @@ export const WaterIntakeForm = () => {
           placeholder="после тренировки, утром и т.п."
         />
         {errors.note && (
-          <p className="text-xs text-red-500 mt-1">{String(errors.note.message)}</p>
+          <p className="text-xs text-red-500 mt-1">
+            {String(errors.note.message)}
+          </p>
         )}
       </div>
 
@@ -129,7 +134,9 @@ export const WaterIntakeForm = () => {
       </Button>
 
       {message && (
-        <div className="text-center text-sm text-gray-600 dark:text-gray-300">{message}</div>
+        <div className="text-center text-sm text-gray-600 dark:text-gray-300">
+          {message}
+        </div>
       )}
     </form>
   );

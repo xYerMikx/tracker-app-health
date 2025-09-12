@@ -2,10 +2,11 @@ import { WaterIntakeForm } from "@/features/water-intake/ui/water-intake-form";
 import { WaterIntakeList } from "@/features/water-intake/ui/water-intake-list";
 import { getWaterIntakes } from "@/lib/water-intake";
 import { NotificationTestButton } from "@/shared/ui/notify-test";
+import { WaterIntake } from "@prisma/client";
 import { Suspense } from "react";
 
 export default async function Home() {
-  const initialIntakeList = await getWaterIntakes();
+  const initialIntakeList: WaterIntake[] = await getWaterIntakes();
 
   return (
     <main className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-gray-100 flex items-center justify-center p-6">

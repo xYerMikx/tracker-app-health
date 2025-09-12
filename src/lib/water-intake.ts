@@ -1,13 +1,14 @@
-import { BASE_URL } from "@/shared/config/constants";
+import prisma from "@/lib/prisma";
 import { WaterIntake } from "@prisma/client";
 
 export async function getWaterIntakes(): Promise<WaterIntake[]> {
-  const res = await fetch(`${BASE_URL}/api/water-intake`);
+  try {
+    const waterIntakes = await prisma.waterIntake.findMany({
+      orderBy: { takenAt: "desc" },
+    });
 
-  if (!res.ok) {
-    throw new Error("Failed to load water intakes from server");
+    return waterIntakes;
+  } catch (_error) {
+    throw new Error("Failed to fetch water intake records");
   }
-
-  const data = await res.json();
-  return data;
 }

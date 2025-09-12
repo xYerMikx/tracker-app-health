@@ -15,13 +15,6 @@ import { Badge } from "@/shared/ui/badge";
 import { isTodayLocal } from "@/shared/utils/date";
 import { WaterIntake } from "@prisma/client";
 
-// type WaterIntake = {
-//   id: number;
-//   volumeMl: number;
-//   takenAt: string;
-//   note?: string | null;
-// };
-
 type Props = {
   initialIntakeList: WaterIntake[];
 };
