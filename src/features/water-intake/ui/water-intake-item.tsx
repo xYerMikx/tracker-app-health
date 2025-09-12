@@ -7,26 +7,26 @@ import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Textarea } from "@/shared/ui/textarea";
 import { TimePicker } from "@/shared/ui/time-picker";
-import { formatDateTimeFromIso, isTodayLocal } from "@/shared/utils/date";
+import {
+  formatDateTimeFromIso,
+  formatTimeWithoutLocale,
+  isTodayLocal,
+} from "@/shared/utils/date";
 import { Edit3, Trash2, Save, X } from "lucide-react";
 import { ConfirmPopover } from "@/shared/ui/confirm-popover";
+import { WaterIntake } from "@prisma/client";
 
-export type WaterIntake = {
-  id: number;
-  volumeMl: number;
-  takenAt: string; 
-  note?: string | null;
-};
+type Props = { entry: WaterIntake };
 
-export function WaterIntakeItem({ entry }: { entry: WaterIntake }) {
-  const canEdit = isTodayLocal(entry.takenAt);
+export function WaterIntakeItem({ entry }: Props) {
+  const canEdit = isTodayLocal(entry.takenAt.toString());
   const queryClient = useQueryClient();
 
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({
     volumeMl: entry.volumeMl,
     note: entry.note ?? "",
-    takenAtLocal: formatDateTimeFromIso(entry.takenAt),
+    takenAtLocal: formatDateTimeFromIso(entry.takenAt.toString()),
   });
 
   const deleteMutation = useMutation({
@@ -78,10 +78,12 @@ export function WaterIntakeItem({ entry }: { entry: WaterIntake }) {
         <div>
           <div className="text-sm">
             <span className="font-semibold">{entry.volumeMl} мл</span>
-            {entry.note ? <span className="text-gray-500"> · {entry.note}</span> : null}
+            {entry.note ? (
+              <span className="text-gray-500"> · {entry.note}</span>
+            ) : null}
           </div>
           <div className="text-xs text-gray-500">
-            {new Date(entry.takenAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            {formatTimeWithoutLocale(entry.takenAt.toString())}
           </div>
         </div>
         <div className="flex gap-2">
@@ -90,7 +92,11 @@ export function WaterIntakeItem({ entry }: { entry: WaterIntake }) {
             size="sm"
             disabled={!canEdit}
             onClick={() => setEditing(true)}
-            title={canEdit ? "Редактировать" : "Редактирование доступно только сегодня"}
+            title={
+              canEdit
+                ? "Редактировать"
+                : "Редактирование доступно только сегодня"
+            }
           >
             <Edit3 className="size-4" />
             Редактировать
@@ -121,14 +127,21 @@ export function WaterIntakeItem({ entry }: { entry: WaterIntake }) {
     <li className="rounded-xl border border-gray-200 dark:border-gray-800 p-3">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
         <div>
-          <Label htmlFor={`volume-${entry.id}`} className="block text-xs mb-1 text-gray-500">Объём (мл)</Label>
+          <Label
+            htmlFor={`volume-${entry.id}`}
+            className="block text-xs mb-1 text-gray-500"
+          >
+            Объём (мл)
+          </Label>
           <Input
             id={`volume-${entry.id}`}
             type="number"
             inputMode="numeric"
             min={1}
             value={form.volumeMl}
-            onChange={(e) => setForm((f) => ({ ...f, volumeMl: Number(e.target.value) }))}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, volumeMl: Number(e.target.value) }))
+            }
           />
         </div>
         <div>
@@ -139,7 +152,12 @@ export function WaterIntakeItem({ entry }: { entry: WaterIntake }) {
           />
         </div>
         <div>
-          <Label htmlFor={`note-${entry.id}`} className="block text-xs mb-1 text-gray-500">Заметка</Label>
+          <Label
+            htmlFor={`note-${entry.id}`}
+            className="block text-xs mb-1 text-gray-500"
+          >
+            Заметка
+          </Label>
           <Textarea
             id={`note-${entry.id}`}
             rows={1}
@@ -153,7 +171,10 @@ export function WaterIntakeItem({ entry }: { entry: WaterIntake }) {
           <X className="size-4" />
           Отмена
         </Button>
-        <Button onClick={() => updateMutation.mutate()} disabled={updateMutation.isPending}>
+        <Button
+          onClick={() => updateMutation.mutate()}
+          disabled={updateMutation.isPending}
+        >
           <Save className="size-4" />
           Сохранить
         </Button>

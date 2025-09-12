@@ -1,21 +1,32 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/shared/ui/card";
 import { Progress } from "@/shared/ui/progress";
 import { WaterIntakeItem } from "./water-intake-item";
 import { DAILY_GOAL_ML } from "@/shared/config/health";
 import { Badge } from "@/shared/ui/badge";
 import { isTodayLocal } from "@/shared/utils/date";
+import { WaterIntake } from "@prisma/client";
 
-type WaterIntake = {
-  id: number;
-  volumeMl: number;
-  takenAt: string; 
-  note?: string | null;
+// type WaterIntake = {
+//   id: number;
+//   volumeMl: number;
+//   takenAt: string;
+//   note?: string | null;
+// };
+
+type Props = {
+  initialIntakeList: WaterIntake[];
 };
 
-export function WaterIntakeList() {
+export function WaterIntakeList({ initialIntakeList }: Props) {
   const { data, isLoading, isError } = useQuery<WaterIntake[]>({
     queryKey: ["water-intakes"],
     queryFn: async () => {
@@ -27,13 +38,17 @@ export function WaterIntakeList() {
       return data;
     },
     staleTime: 15_000,
+    initialData: initialIntakeList,
   });
 
   const entries = data ?? [];
   const todayTotal = entries
-    .filter((e) => isTodayLocal(e.takenAt))
+    .filter((e) => isTodayLocal(e.takenAt.toString()))
     .reduce((acc, e) => acc + e.volumeMl, 0);
-  const progress = Math.min(100, Math.round((todayTotal / DAILY_GOAL_ML) * 100));
+  const progress = Math.min(
+    100,
+    Math.round((todayTotal / DAILY_GOAL_ML) * 100)
+  );
 
   return (
     <Card>
@@ -45,9 +60,7 @@ export function WaterIntakeList() {
               {todayTotal} мл / {DAILY_GOAL_ML} мл
             </CardDescription>
           </div>
-          <Badge>
-            Прогресс: {progress}%
-          </Badge>
+          <Badge>Прогресс: {progress}%</Badge>
         </div>
       </CardHeader>
       <CardContent>
