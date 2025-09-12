@@ -1,14 +1,24 @@
 import prisma from "@/lib/prisma";
 import { WaterIntake } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 
-export async function getWaterIntakes(): Promise<WaterIntake[]> {
-  try {
-    const waterIntakes = await prisma.waterIntake.findMany({
-      orderBy: { takenAt: "desc" },
-    });
+export const WATER_INTAKE_TAG = "water-intakes";
 
-    return waterIntakes;
-  } catch (_error) {
-    throw new Error("Failed to fetch water intake records");
+export const getWaterIntakes = unstable_cache(
+  async (): Promise<WaterIntake[]> => {
+    try {
+      const waterIntakes = await prisma.waterIntake.findMany({
+        orderBy: { takenAt: "desc" },
+      });
+
+      return waterIntakes;
+    } catch (_error) {
+      return [];
+    }
+  },
+  ["water-intakes"],
+  {
+    tags: [WATER_INTAKE_TAG],
+    revalidate: 3600,
   }
-}
+);

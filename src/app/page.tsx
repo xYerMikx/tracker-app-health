@@ -5,6 +5,9 @@ import { NotificationTestButton } from "@/shared/ui/notify-test";
 import { WaterIntake } from "@prisma/client";
 import { Suspense } from "react";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function Home() {
   const initialIntakeList: WaterIntake[] = await getWaterIntakes();
 
