@@ -1,3 +1,4 @@
+import { LogoutButton } from "@/features/auth/ui/logout-button";
 import { WaterIntakeForm } from "@/features/water-intake/ui/water-intake-form";
 import { WaterIntakeList } from "@/features/water-intake/ui/water-intake-list";
 import { getWaterIntakes } from "@/lib/water-intake";
@@ -16,7 +17,7 @@ export default async function Home() {
       <div className="w-full max-w-md">
         <div className="border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm bg-white/60 dark:bg-black/40 backdrop-blur">
           <h1 className="text-xl font-semibold tracking-tight mb-1">
-            Water Intake
+            Трекер приёма воды
           </h1>
           <p className="text-sm text-gray-500 mb-6">
             Запиши, сколько воды ты выпил
@@ -28,7 +29,10 @@ export default async function Home() {
             <WaterIntakeList initialIntakeList={initialIntakeList} />
           </Suspense>
         </div>
-        <NotificationTestButton />
+        <div className="mt-6 flex gap-2">
+          <LogoutButton />
+          {/* <NotificationTestButton /> */}
+        </div>
       </div>
     </main>
   );

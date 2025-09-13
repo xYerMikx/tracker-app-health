@@ -1,22 +1,31 @@
+"use client";
+
 import { HTMLAttributes } from "react";
-import { cn } from "./cn";
+import { cn } from "@/lib/utils";
 
 type Intent = "default" | "success" | "warning" | "danger";
 
 export interface ProgressProps extends HTMLAttributes<HTMLDivElement> {
   value?: number;
   intent?: Intent;
+  max?: number;
 }
 
 const progressClassMap: Record<Intent, string> = {
-  default: "bg-gray-900 dark:bg-white",
-  success: "bg-green-600 dark:bg-green-500",
+  default: "bg-blue-500",
+  success: "bg-green-500",
   warning: "bg-amber-500",
   danger: "bg-red-500",
-}
+};
 
-export function Progress({ value = 0, intent = "default", className, ...props }: ProgressProps) {
-  const clamped = Math.max(0, Math.min(100, value));
+export function Progress({
+  value = 0,
+  intent = "default",
+  max = 100,
+  className,
+  ...props
+}: ProgressProps) {
+  const percentage = Math.max(0, Math.min(100, (value / max) * 100));
   const barClass = progressClassMap[intent];
 
   return (
@@ -27,7 +36,10 @@ export function Progress({ value = 0, intent = "default", className, ...props }:
       )}
       {...props}
     >
-      <div className={cn("h-full transition-[width] duration-300", barClass)} style={{ width: `${clamped}%` }} />
+      <div
+        className={cn("h-full transition-all duration-500 ease-out", barClass)}
+        style={{ width: `${percentage}%` }}
+      />
     </div>
   );
 }
