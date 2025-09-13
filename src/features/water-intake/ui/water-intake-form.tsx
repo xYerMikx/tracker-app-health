@@ -11,6 +11,9 @@ import { Textarea } from "@/shared/ui/textarea";
 import { Label } from "@/shared/ui/label";
 import { TimePicker } from "@/shared/ui/time-picker";
 import { formatDateTimeFromIso } from "@/shared/utils/date";
+import { WaterTag } from "@/shared/ui/water-tag";
+
+const VOLUME_PRESETS = [150, 200, 250, 300];
 
 export const WaterIntakeForm = () => {
   const queryClient = useQueryClient();
@@ -21,12 +24,13 @@ export const WaterIntakeForm = () => {
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
     control,
   } = useForm<WaterIntakeInput>({
     resolver: valibotResolver(waterIntakeSchema),
     defaultValues: {
-      volumeMl: 250,
       takenAt: formatDate,
       note: "",
     },
@@ -58,7 +62,7 @@ export const WaterIntakeForm = () => {
 
       queryClient.invalidateQueries({ queryKey: ["water-intakes"] });
 
-      reset({ volumeMl: 250, takenAt: takenAtCurrent, note: "" });
+      reset({ takenAt: takenAtCurrent, note: "" });
       setTimeout(() => setMessage(null), 2500);
     },
     onError: (err) => {
@@ -68,20 +72,38 @@ export const WaterIntakeForm = () => {
     },
   });
 
+  const currentVolume = watch("volumeMl");
+
+  const handleVolumePreset = (volume: number) => {
+    setValue("volumeMl", volume, { shouldValidate: true });
+  };
+
   const onSubmit = (data: WaterIntakeInput) => mutation.mutate(data);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
-        <Label htmlFor="volumeMl" className="block text-sm mb-1">
+        <Label htmlFor="volumeMl" className="block text-sm mb-2">
           Объём (мл)
         </Label>
+        <div className="flex flex-wrap gap-2 mb-3">
+          {VOLUME_PRESETS.map((volume) => (
+            <WaterTag
+              key={volume}
+              value={volume}
+              isSelected={currentVolume === volume}
+              onClick={handleVolumePreset}
+            />
+          ))}
+        </div>
+
         <Input
           id="volumeMl"
           type="number"
           inputMode="numeric"
           min={1}
-          placeholder="например, 250"
+          placeholder="или введите своё значение"
+          className="w-full"
           {...register("volumeMl", { valueAsNumber: true })}
         />
         {errors.volumeMl && (

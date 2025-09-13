@@ -10,13 +10,15 @@ function invalidateCache() {
 
 export async function GET() {
   const session = await auth();
+  const uid = session?.user?.id;
 
-  if (!session?.user?.id) {
+  if (!uid) {
     throw new Error("Not authorized");
   }
 
   try {
     const waterIntakes = await prisma.waterIntake.findMany({
+      where: { userId: uid },
       orderBy: { takenAt: "desc" },
     });
     return NextResponse.json(waterIntakes);
@@ -31,8 +33,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const session = await auth();
+  const uid = session?.user?.id;
 
-  if (!session?.user?.id) {
+  if (!uid) {
     throw new Error("Not authorized");
   }
 
@@ -51,6 +54,7 @@ export async function POST(request: Request) {
         volumeMl,
         takenAt: new Date(takenAt),
         note,
+        userId: uid,
       },
     });
 
@@ -68,8 +72,9 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   const session = await auth();
+  const uid = session?.user?.id;
 
-  if (!session?.user?.id) {
+  if (!uid) {
     throw new Error("Not authorized");
   }
 
@@ -84,7 +89,7 @@ export async function PUT(request: Request) {
     }
 
     const updatedRecord = await prisma.waterIntake.update({
-      where: { id },
+      where: { id, userId: uid },
       data: {
         volumeMl,
         takenAt: new Date(takenAt),
@@ -105,8 +110,9 @@ export async function PUT(request: Request) {
 }
 export async function DELETE(request: Request) {
   const session = await auth();
+  const uid = session?.user?.id;
 
-  if (!session?.user?.id) {
+  if (!uid) {
     throw new Error("Not authorized");
   }
 
@@ -121,7 +127,7 @@ export async function DELETE(request: Request) {
     }
 
     await prisma.waterIntake.delete({
-      where: { id },
+      where: { id, userId: uid },
     });
 
     invalidateCache();
