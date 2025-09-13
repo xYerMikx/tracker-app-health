@@ -1,12 +1,6 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { WATER_INTAKE_TAG } from "@/lib/water-intake";
-import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
-
-function invalidateCache() {
-  revalidateTag(WATER_INTAKE_TAG);
-}
 
 export async function GET() {
   const session = await auth();
@@ -58,8 +52,6 @@ export async function POST(request: Request) {
       },
     });
 
-    invalidateCache();
-
     return NextResponse.json(newRecord, { status: 201 });
   } catch (error) {
     console.error("Error creating water intake record:", error);
@@ -97,8 +89,6 @@ export async function PUT(request: Request) {
       },
     });
 
-    invalidateCache();
-
     return NextResponse.json(updatedRecord);
   } catch (error) {
     console.error("Error updating water intake record:", error);
@@ -129,8 +119,6 @@ export async function DELETE(request: Request) {
     await prisma.waterIntake.delete({
       where: { id, userId: uid },
     });
-
-    invalidateCache();
 
     return NextResponse.json({ message: "Record deleted successfully" });
   } catch (error) {
