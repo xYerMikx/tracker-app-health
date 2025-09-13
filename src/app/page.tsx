@@ -1,3 +1,4 @@
+import { LogoutButton } from "@/features/auth/ui/logout-button";
 import { WaterIntakeForm } from "@/features/water-intake/ui/water-intake-form";
 import { WaterIntakeList } from "@/features/water-intake/ui/water-intake-list";
 import { getWaterIntakes } from "@/lib/water-intake";
@@ -28,6 +29,7 @@ export default async function Home() {
             <WaterIntakeList initialIntakeList={initialIntakeList} />
           </Suspense>
         </div>
+        <LogoutButton />
         <NotificationTestButton />
       </div>
     </main>

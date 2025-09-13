@@ -6,7 +6,6 @@ import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Textarea } from "@/shared/ui/textarea";
-import { TimePicker } from "@/shared/ui/time-picker";
 import {
   formatDateTimeFromIso,
   formatTimeWithoutLocale,
@@ -15,6 +14,29 @@ import {
 import { Edit3, Trash2, Save, X } from "lucide-react";
 import { ConfirmPopover } from "@/shared/ui/confirm-popover";
 import { WaterIntake } from "@prisma/client";
+
+import dynamic from "next/dynamic";
+
+const TimePicker = dynamic(
+  () => import("@/shared/ui/time-picker").then((module) => module.TimePicker),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex gap-4">
+        <div className="flex flex-col gap-3">
+          <Label className="px-1">Дата</Label>
+          <Button variant="outline" disabled>
+            Загрузка...
+          </Button>
+        </div>
+        <div className="flex flex-col gap-3">
+          <Label className="px-1">Время</Label>
+          <Input type="time" disabled />
+        </div>
+      </div>
+    ),
+  }
+);
 
 type Props = { entry: WaterIntake };
 
