@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
-import { PUBLIC_PATHS } from "@/shared/config/constants";
 import { NextResponse } from "next/server";
+
+const PUBLIC_PATHS = ["/signin", "/api/auth", "/_next", "/favicon.ico"];
 
 export const middleware = auth((req) => {
   const { pathname } = req.nextUrl;
