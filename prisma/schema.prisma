@@ -15,24 +15,28 @@ model WaterIntake {
   note      String? // optional description (e.g., "after workout")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @default("")
 
   // Index by time to make daily/monthly stats fast
   @@index([takenAt])
+  @@index([userId])
 }
 
 model User {
-  id            String          @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String          @unique
+  email         String        @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
- 
+  waterIntakes  WaterIntake[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model Account {
   userId            String
   type              String
@@ -45,29 +49,29 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([provider, providerAccountId])
 }
- 
+
 model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@id([identifier, token])
 }
